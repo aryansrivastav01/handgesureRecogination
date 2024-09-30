@@ -16,30 +16,40 @@ hands = mp_hands.Hands(
 # Function to recognize gestures based on landmarks
 def recognize_gesture(hand_landmarks):
     if hand_landmarks:
-        # Example of simple gesture recognition: count number of extended fingers
-        finger_tips_ids = [4, 8, 12, 16, 20]  # Tip landmarks of each finger
+        finger_tips_ids = [4, 8, 12, 16, 20]
         extended_fingers = 0
         
         for tip_id in finger_tips_ids:
-            x, y = hand_landmarks[tip_id].x, hand_landmarks[tip_id].y
-            # Assuming a basic gesture: if tip is above the base of the finger (simple approximation)
-            if y < hand_landmarks[tip_id - 2].y:
+            if hand_landmarks[tip_id].y < hand_landmarks[tip_id - 2].y:
                 extended_fingers += 1
         
         if extended_fingers == 5:
-            return "All fingers extended"
+            return "Hello"
         elif extended_fingers == 1:
-            return "One finger extended"
+            return "Thumbs Up"
+        elif extended_fingers == 0:
+            return "Fist"
+        elif extended_fingers == 3:
+            return "VICTORY"
+        elif extended_fingers == 4:
+            return "NICE"
         else:
             return "Gesture not recognized"
     return "No hand detected"
 
 # Start capturing video from the camera
-cap = cv2.VideoCapture(0)
+camera_index = 0  # Try changing this if you have multiple cameras
+cap = cv2.VideoCapture(camera_index)
+
+# Check if the camera opened successfully
+if not cap.isOpened():
+    print(f"Error: Could not open video capture device at index {camera_index}")
+    exit()
 
 while cap.isOpened():
     ret, frame = cap.read()
     if not ret:
+        print("Error: Failed to capture image")
         break
 
     # Convert the BGR image to RGB
